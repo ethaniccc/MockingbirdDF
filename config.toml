@@ -1,0 +1,14 @@
+
+[Network]
+  Address = "0.0.0.0:19132"
+
+[Server]
+  MaximumPlayers = 1000
+  Name = "Dragonfly Server"
+  ShutdownMessage = "Server closed."
+
+[World]
+  Folder = "world"
+  MaximumChunkRadius = 32
+  Name = "World"
+  SimulationDistance = 8
