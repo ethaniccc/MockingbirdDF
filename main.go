@@ -11,7 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	"server/Mockingbird/handler"
+	"server/Mockingbird"
 )
 
 func main() {
@@ -34,6 +34,7 @@ func main() {
 
 	server := dragonfly.New(&config, log)
 	server.CloseOnProgramEnd()
+
 	if err := server.Start(); err != nil {
 		log.Fatalln(err)
 	}
@@ -42,9 +43,8 @@ func main() {
 		p, err := server.Accept()
 		if err != nil {
 			return
-		} else {
-			p.Handle(handler.NewPlayerHandler(p))
 		}
+		p.Handle(Mockingbird.NewPlayerHandler(p))
 	}
 
 }

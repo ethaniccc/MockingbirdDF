@@ -16,11 +16,7 @@ type DetectionBase struct {
 
 }
 
-type Detection interface {
-	check(player player.Player)
-}
-
-func (d DetectionBase) fail(player *player.Player){
+func (d *DetectionBase) fail(player *player.Player){
 	d.currentVL++
 	if d.currentVL >= d.maxVL{
 		fmt.Printf("punished player " + player.Name() + " for " + d.name)

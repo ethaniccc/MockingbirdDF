@@ -1,6 +1,7 @@
-package handler
+package Mockingbird
 
 import (
+	"fmt"
 	"github.com/df-mc/dragonfly/dragonfly/event"
 	"github.com/df-mc/dragonfly/dragonfly/player"
 	"github.com/go-gl/mathgl/mgl64"
@@ -18,10 +19,11 @@ type PlayerHandler struct {
 
 var handlers = sync.Map{}
 
-func NewPlayerHandler(player *player.Player) *PlayerHandler{
-	handler := &PlayerHandler{p: player, detections: detections.DetectionList{}}
+func NewPlayerHandler(player *player.Player) *PlayerHandler {
+	handler := PlayerHandler{p: player, detections: detections.DetectionList{}}
 	handlers.Store(player, handler)
-	return handler
+	data.CreateData(player)
+	return &handler
 }
 
 func getHandler(player *player.Player) (*PlayerHandler, bool){
@@ -32,10 +34,11 @@ func getHandler(player *player.Player) (*PlayerHandler, bool){
 	return v.(*PlayerHandler), true
 }
 
-func (handler PlayerHandler) HandleMove(_ *event.Context, pos mgl64.Vec3, _, _ float64){
-	var p = handler.p
-	var userData, hasData = data.GetData(p)
-	if !hasData{
+func (handler *PlayerHandler) HandleMove(_ *event.Context, pos mgl64.Vec3, _, _ float64){
+	p, d := handler.p, handler.detections
+	userData, hasData := data.GetData(p)
+	if !hasData {
+		fmt.Printf("player does not have data!")
 		return
 	} else {
 		userData.MoveData.LastLocation = userData.MoveData.Location
@@ -58,5 +61,8 @@ func (handler PlayerHandler) HandleMove(_ *event.Context, pos mgl64.Vec3, _, _ f
 		userData.MoveData.LastPitchDelta = userData.MoveData.PitchDelta
 		userData.MoveData.YawDelta = math.Abs(userData.MoveData.Yaw - userData.MoveData.LastYaw)
 		userData.MoveData.PitchDelta = math.Abs(userData.MoveData.Pitch - userData.MoveData.LastPitch)
+
+		// now for the checks to run
+		d.FlyA.Check(userData)
 	}
 }

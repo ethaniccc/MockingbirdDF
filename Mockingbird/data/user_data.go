@@ -8,8 +8,9 @@ import (
 )
 
 type UserData struct {
-	MoveData MovementData
+	MoveData  MovementData
 	BasicData BasicData
+	Player    *player.Player
 }
 
 type MovementData struct {
@@ -31,13 +32,13 @@ type BasicData struct {
 
 var dataList = sync.Map{}
 
-func createData(player *player.Player){
-	dataList.Store(player, UserData{})
+func CreateData(player *player.Player){
+	dataList.Store(player, &UserData{Player: player})
 }
 
 func GetData(player *player.Player) (*UserData, bool){
-	v, enabled := dataList.Load(player)
-	if !enabled{
+	v, ok := dataList.Load(player)
+	if !ok {
 		return nil, false
 	}
 	return v.(*UserData), true
